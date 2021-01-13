@@ -12,7 +12,7 @@ spring:
     servlet:
       load-on-startup: 100
   redis:
-    host: 192.168.23.135
+    host: 192.168.23.136
     port: 6379
     password: 123456
     timeout: 1000
@@ -27,6 +27,13 @@ spring:
         testOnBorrow: true
         testOnReturn: true
         blockWhenExhausted: false
+  data:
+    mongodb:
+      database: admin
+      host: 192.168.23.136
+      port: 27017
+      username: amdin
+      password: 123456
 # thymeleaf
   thymeleaf:
     prefix: classpath:/templates/
@@ -43,5 +50,5 @@ mybatis:
   mapper-locations: classpath:mapper/*.xml
 
 hdfs:
-  path: hdfs://192.168.25.135:9000
+  path: hdfs://192.168.25.136:9000
   username: root

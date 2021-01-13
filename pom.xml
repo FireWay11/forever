@@ -96,8 +96,11 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.11.2</version>
         </dependency>
-
-
+        <!--    aop    -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
         <!-- Hadoop -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
