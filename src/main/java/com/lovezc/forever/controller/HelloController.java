@@ -1,5 +1,6 @@
 package com.lovezc.forever.controller;
 
+import com.lovezc.forever.config.OperLog;
 import com.lovezc.forever.util.utils.RedisClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,19 +17,24 @@ public class HelloController {
 
     @Autowired
     private RedisClient redisClient;
+
+
     @RequestMapping("/")
-    public String hello(HttpServletRequest request, @RequestParam(value = "name", defaultValue = "笨蛋小面包") String name) {
+    @OperLog(operModul = "欢迎",operType = "01",operDesc = "测试功能")
+    public String hello(HttpServletRequest request, @RequestParam(value = "name", defaultValue = "world") String name) {
         request.setAttribute("name", name);
         return "hello";
     }
 
+    /**
+     * 测试redis删除key
+     * @param str
+     * @return
+     */
     @RequestMapping("/test")
     @ResponseBody
     public boolean test(String str) {
-//        Set<String> test = redisClient.getScan(str, 500);
-//        return test;
-        boolean b = redisClient.delLargeHashKey(str, 500);
-        return b;
+        return redisClient.delLargeHashKey(str, 500);
     }
 
 
