@@ -36,7 +36,7 @@ public class XWPFUtils {
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
                 //如果子元素是<w:drawing>这样的形式，使用CTDrawing保存图片
-                if (o instanceof CTDrawing) {
+                 if (o instanceof CTDrawing) {
                     CTDrawing drawing = (CTDrawing) o;
                     CTInline[] ctInlines = drawing.getInlineArray();
                     for (CTInline ctInline : ctInlines) {

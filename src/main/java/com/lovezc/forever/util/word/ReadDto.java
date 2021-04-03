@@ -1,31 +1,14 @@
 package com.lovezc.forever.util.word;
 
+import lombok.Data;
+
+@Data
 public class ReadDto {
     private String prefix;
     private String text;
     private int titleLevel;
+    private int sort;
+    private String uuid;
+    private String parentUuid;
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public int getTitleLevel() {
-        return titleLevel;
-    }
-
-    public void setTitleLevel(int titleLevel) {
-        this.titleLevel = titleLevel;
-    }
 }

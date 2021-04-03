@@ -59,108 +59,44 @@ public class ReadWordTest {
 
 
     public static void main(String[] args) throws Exception {
-//        File file = new File("D:\\测试文档.docx");
         File file = new File("D:\\评估报告.docx");
         FileInputStream fis = new FileInputStream(file);
         XWPFDocument xdoc = new XWPFDocument(fis);
         List<XWPFParagraph> paragraphs = xdoc.getParagraphs();
         List<ReadDto> readDtos = new ArrayList<>();
+        Stack<ReadDto> stack = new Stack<>();
         for (XWPFParagraph paragraph : paragraphs) {
             String text = paragraph.getText();
             String titleLvl = getTitleLvl(xdoc, paragraph);
             if (StringUtils.isNotEmpty(titleLvl)) {
                 int level = Integer.parseInt(titleLvl);
-//                System.out.println("text: " + text + ", titleLvl: " + titleLvl);
                 ReadDto readDto = new ReadDto();
                 readDto.setText(text);
                 readDto.setTitleLevel(level);
+                readDto.setUuid(UUID.randomUUID().toString());
+                if (stack.size() != 0) {
+                    ReadDto peek = stack.peek();
+                    while ((level - 1) != peek.getTitleLevel() && !stack.isEmpty()) {
+                        stack.pop();
+                        if (!stack.isEmpty()) {
+                            peek = stack.peek();
+                        } else {
+                            peek = null;
+                            break;
+                        }
+                    }
+                    if (peek != null) {
+                        readDto.setParentUuid(peek.getUuid());
+                    }
+                }
+                stack.push(readDto);
+
                 readDtos.add(readDto);
             }
         }
-        int zeroCount = 0;//0出现的次数
-        int oneCount = 0;//1出现的次数
-        int twoCount = 0;//2出现的次数
-        int threeCount = 0;//3出现的次数
-        int curPoint = 0;//当前指针值
-        for (int i = 0; i < readDtos.size(); i++) {
-            int curLevel = readDtos.get(i).getTitleLevel();
-            if (curLevel > 4) {
-                throw new RuntimeException("暂不支持目录层级超过4层!!!");
-            }
-            if (curPoint == 0) {
-                zeroCount++;
-                curPoint = 1;
-                readDtos.get(i).setPrefix(zeroCount + ".");
-            } else if (curPoint == 1) {
-                if (curLevel == 0) {
-                    zeroCount++;
-                    oneCount = 0;
-                    twoCount = 0;
-                    threeCount = 0;
-                    curPoint = 1;
-                    readDtos.get(i).setPrefix(zeroCount + ".");
-                }
-                if (curLevel == 1) {
-                    curPoint++;
-                    oneCount++;
-                    readDtos.get(i).setPrefix(zeroCount + "." + "1.");
-                }
-            } else if (curPoint == 2) {
-                if (curLevel == 0) {
-                    zeroCount++;
-                    oneCount = 0;
-                    twoCount = 0;
-                    threeCount = 0;
-                    curPoint = 1;
-                    readDtos.get(i).setPrefix(zeroCount + ".");
-                } else if (curLevel == 1) {
-                    oneCount++;
-                    twoCount = 0;
-                    curPoint = 2;
-                    readDtos.get(i).setPrefix(zeroCount + "." + oneCount + ".");
-                } else if (curLevel == 2) {
-                    curPoint = 3;
-                    twoCount++;
-                    threeCount = 0;
-                    readDtos.get(i).setPrefix(zeroCount + "." + oneCount + "." + twoCount + ".");
-                }
-            } else if (curPoint == 3) {
-                if (curLevel == 0) {
-                    zeroCount++;
-                    oneCount = 0;
-                    twoCount = 0;
-                    threeCount = 0;
-                    curPoint = 1;
-                    readDtos.get(i).setPrefix(zeroCount + ".");
-                } else if (curLevel == 1) {
-                    oneCount++;
-                    curPoint = 2;
-                    twoCount = 0;
-                    readDtos.get(i).setPrefix(zeroCount + "." + oneCount + ".");
-                } else if (curLevel == 2) {
-                    curPoint = 3;
-                    twoCount++;
-                    threeCount = 0;
-                    readDtos.get(i).setPrefix(zeroCount + "." + oneCount + "." + twoCount + ".");
-                } else if (curLevel == 3) {
-                    threeCount++;
-                    if (i < readDtos.size() - 1) {
-                        int nextLevel = readDtos.get(i + 1).getTitleLevel();
-                        if (nextLevel > 3) {
-                            throw new RuntimeException("暂不支持目录层级超过4层!!!");
-                        }
-                        if (nextLevel == 3) {
-                            curPoint = 3;
-                        } else if (nextLevel < 3) {
-                            curPoint = nextLevel + 1;
-                        }
-                    }
-                    readDtos.get(i).setPrefix(zeroCount + "." + oneCount + "." + twoCount + "." + threeCount + ".");
-                }
-            }
-        }
+
         for (ReadDto dto : readDtos) {
-            System.out.println("text:" + dto.getPrefix() + dto.getText() + ",level:" + dto.getTitleLevel());
+            System.out.println("---text:"+ dto.getText() + "---level:" + dto.getTitleLevel() + "---uuid:" + dto.getUuid() + "---parentid:" + dto.getParentUuid());
 
         }
     }
